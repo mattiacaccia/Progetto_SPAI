@@ -1,0 +1,7 @@
+# Valutazione di YOLOv8 / RT-DETR SOLO sul test isolato (campioni SEM-0002, SEM-0008).
+path: data/yolo_test
+train: images
+val: images
+test: images
+nc: 1
+names: ['spermatozoon']

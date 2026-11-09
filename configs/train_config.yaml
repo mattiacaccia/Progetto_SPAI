@@ -1,0 +1,57 @@
+# CONFIGURAZIONE GENERALE ADDESTRAMENTO
+
+project:
+  name: "Progetto_SPAI_Detection"
+  seed: 42
+  device: "mps"  # Accelerazione hardware su Apple Silicon
+
+dataset:
+  path: "data"
+  img_size: 640
+  batch_size: 16 # TOD-CNN (ciclo PyTorch custom)
+  batch_size_ultralytics: 8  # 8 per YOLOv8 e 4 per RT-DETR
+  batch_size_detrvit: 8      
+  num_workers: 0             # TOD-CNN
+  num_workers_ultralytics: 0 # YOLOv8 e RT-DETR
+  num_workers_detrvit: 2     # decodifica JPEG in parallelo al calcolo su GPU (se ci sono blocchi su macOS: mettere 0)
+  num_classes: 1  # numero di classi da rilevare : 1 -> solo TESTA SPERMATOZOO
+
+training:
+  epochs: 50
+  save_dir: "runs/train"
+  checkpoint_interval: 5  #ogni 5 epoche salva un checkpoint del modello
+  patience: 5        # Pazienza per l'Early Stopping 
+  patience_ultralytics: 10  # YOLOv8 e RT-DETR 
+  patience_detrvit: 10  
+  min_epochs_detrvit: 10 
+
+optimizer:
+  name: "AdamW"
+  lr: 0.0001           # Lr iniziale per YOLOv8, RTDETR e TODCNN (1e-4)
+  detrvit_lr: 0.0001           # DETR ViT-based: lr di proiezione, encoder-decoder Transformer e teste
+  detrvit_backbone_lr: 0.00001 # DETR ViT-based: lr del backbone ViT pre-addestrato
+  weight_decay: 0.0005 # Regolarizzazione L2 per evitare overfitting
+
+scheduler:
+  name: "CosineAnnealingLR"
+  T_max: 50            # Ciclo del Cosine Annealing pari alle epoche totali
+  eta_min: 0.000001     # Lr minimo alla fine del ciclo
+
+models:
+  detrvit:
+    enabled: true
+    backbone: tiny            # tiny | small | small32  (scegli con bench_detr_vit.py)
+    pool: 2                   # average pool 2x2 sui token del ViT 
+    freeze_blocks: 4          # blocchi ViT iniziali congelati
+    init_transformer: coco    # coco | random
+    num_queries: 100
+    auxiliary_loss: true      # loss su ogni layer del decoder: converge molto meglio
+  yolov8:
+    enabled: true
+    config_path: "configs/models/yolov8.yaml"
+  rtdetr:
+    enabled: true
+    config_path: "configs/models/rtdetr.yaml"
+  todcnn:
+    enabled: true
+    config_path: "configs/models/todcnn.yaml"

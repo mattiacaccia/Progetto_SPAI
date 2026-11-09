@@ -60,7 +60,7 @@ def process_fertylab_from_yolo(only_sperm_class: bool = False):
     all_samples = list(set(samples_map.values()))
     
     # Test Set fisso su 2 campioni specifici 
-    test_samples = [s for s in ['SEM-0002', 'SEM-0013'] if s in all_samples]
+    test_samples = [s for s in ['SEM-0002', 'SEM-0008'] if s in all_samples]
     train_val_samples = [s for s in all_samples if s not in test_samples]
 
     splits = {
