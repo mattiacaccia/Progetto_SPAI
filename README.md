@@ -6,47 +6,56 @@ Vengono confrontati quattro modelli (YOLOv8, RT-DETR, DETR ViT-based, TOD-CNN) i
 
 Installazione
 
-Serve uv quindi: 
+Serve uv quindi nel terminale: 
 
-bash
 brew install uv
 
-bash
+poi:
+
 git clone https://github.com/mattiacaccia/Progetto_SPAI.git
+
 cd Progetto_SPAI
+
 uv sync
+
 
 Dati
 
 I dataset non sono nel repository. Vanno messi in data/:
 
 data/DataSet_FertyLab/   (images/, yolo/labels/, csv/, manifest.json)
+
 data/SVIA_DataSet/       (Subset-A/, Frames from original videos/)
 
 Le altre cartelle in data/ vengono create dagli script.
 
 Esecuzione
 
-Preparazione dei dati (in quest'ordine):
+Preparazione dei dati (in quest'ordine nel temrinale):
 
-bash
+
 uv run python scripts/parse_fertylab.py
+
 uv run python scripts/parse_svia.py
+
 uv run python src/datasets/slice_dataset.py
+
 uv run python src/prepare_yolo_data.py
+
 uv run python src/prepare_yolo_test.py
 
 Training (i parametri sono in configs/train_config.yaml; per il regime B si usa regime_b):
 
-bash
 uv run python src/train_ultralytics.py --model yolov8 --regime regime_a
+
 uv run python src/train_ultralytics.py --model rtdetr --regime regime_a
+
 uv run python src/train_detr_vit.py --regime regime_a
+
 uv run python src/train_todcnn.py --regime regime_a
 
 Test sul test set (--model può essere yolov8, rtdetr, detrvit, todcnn):
 
-bash
 uv run python src/test.py --model yolov8 --regime regime_a
 
 I risultati vengono salvati in runs/train/, runs/test/
