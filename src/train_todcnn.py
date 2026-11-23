@@ -28,8 +28,6 @@ from src.models.tod_cnn_wrapper import TODCNNWrapper
 from src.utils.det_metrics import compute_detection_metrics
 
 def decode_todcnn(pred_map, conf_thr=0.001, max_cand=300, nms_iou=0.5, max_det=100):
-    """pred_map [C,H,W]: canali 0-3 = cx,cy,w,h (già sigmoid), canale 4 = logit di confidenza.
-    Candidati top-K + NMS (senza NMS ogni oggetto genera più box duplicati = falsi positivi)."""
     pred_map = pred_map.detach().float().cpu()
     conf = torch.sigmoid(pred_map[4]).reshape(-1)
     top_conf, idx = torch.topk(conf, min(max_cand, conf.numel()))
@@ -45,7 +43,6 @@ def decode_todcnn(pred_map, conf_thr=0.001, max_cand=300, nms_iou=0.5, max_det=1
     return xyxy[k], top_conf[k]
 
 def save_batch_images(dataloader, save_dir: Path):
-    """Salva le anteprime dei batch di training e validation con bounding box reali."""
     print("[GENERAZIONE ARTEFATTI] Salvataggio anteprime batch con bounding box ed etichette...")
     for b_idx, (images, targets) in enumerate(dataloader):
         if b_idx >= 3:
@@ -89,7 +86,6 @@ def save_batch_images(dataloader, save_dir: Path):
 
 @torch.no_grad()
 def evaluate_model(model, dataloader, device, bce_criterion, mse_criterion):
-    """Valutazione reale sul validation set per TOD-CNN utilizzando compute_detection_metrics."""
     model.eval()
     val_loss_obj_tot = 0.0
     val_loss_box_tot = 0.0

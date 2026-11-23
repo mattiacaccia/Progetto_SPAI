@@ -17,4 +17,5 @@ dependencies = [
     "matplotlib",
     "pandas>=2.3.3",
     "pillow>=12.3.0",
+    "streamlit>=1.65.0",
 ]
