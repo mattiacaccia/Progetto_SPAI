@@ -59,3 +59,18 @@ Test sul test set (--model può essere yolov8, rtdetr, detrvit, todcnn):
 uv run python src/test.py --model yolov8 --regime regime_a
 
 I risultati vengono salvati in runs/train/, runs/test/
+
+Tracking e CASA (YOLOv8, Scenario A) sui video di data/spai_video/<CAMPIONE>/<CAMPIONE>_Vnn.avi con i relativi .camera.json. Lo split per campione è lo stesso della detection: train (SEM1, SEM-0003, SEM-0007) per stimare la velocità massima delle teste, validation (SEM-0004) per scegliere i parametri del tracker, test (tutti gli altri campioni, esclusi SEM-0012 e SEM-0013) per pseudo-etichette e CASA:
+
+uv run python src/tracking.py --model yolov8 --regime regime_a --stage detect 
+
+uv run python src/tracking.py --model yolov8 --regime regime_a --stage tune 
+
+uv run python src/tracking.py --model yolov8 --regime regime_a --stage casa
+
+I risultati vengono salvati in runs/tracking_video/.
+
+DENO:
+Interfaccia Streamlit con la object detection dei quattro modelli nei due scenari e il tracking con CASA sui video e tile di test:
+
+uv run streamlit run app.py
